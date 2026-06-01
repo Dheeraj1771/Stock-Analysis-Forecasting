@@ -66,7 +66,13 @@ with col2:
     st.plotly_chart(fig_df, use_container_width=True)
    
 # Dowload the Data using yfinance   
-data = yf.download(ticker, start=start_date, end=end_date)
+# 1. Create a cached function for downloading
+@st.cache_data
+def fetch_historical_data(ticker, start, end):
+    return yf.download(ticker, start=start, end=end)
+
+# 2. Call the new cached function
+data = fetch_historical_data(ticker, start=start_date, end=end_date)
 
 col1, col2, col3 = st.columns(3)
 
