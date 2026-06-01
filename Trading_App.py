@@ -20,9 +20,9 @@ st.write("Through this page, you can see all the information about stock.")
 st.markdown("#### :two: Stock Prediction")
 st.write("You can explore predicted closing prices for the next 30 days based on historical stock data and advanced forecasting models. Use this tool to gain valuable insights into market trends and make informed investment decisions.")
 
-st.markdown("#### :three: CAPM Return")
-st.write("Discover how the Capital Asset Pricing Model (CAPM) calculates the expected return of different stocks asset based on its risk and market performance")
+# st.markdown("#### :three: CAPM Return")
+# st.write("Discover how the Capital Asset Pricing Model (CAPM) calculates the expected return of different stocks asset based on its risk and market performance")
 
-st.markdown("#### :four: CAPM Beta")
-st.write("Calculates Beta and Expected Return for Individual Stocks.")
+# st.markdown("#### :four: CAPM Beta")
+# st.write("Calculates Beta and Expected Return for Individual Stocks.")
 

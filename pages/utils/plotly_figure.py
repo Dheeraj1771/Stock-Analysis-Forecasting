@@ -162,3 +162,33 @@ def MACD(dataframe, num_period):
         )
     )
     return fig
+
+def moving_average_forecast(forecast):
+    fig = go.Figure()
+    # Leave Last 30 Days
+    fig.add_trace(go.Scatter(x=forecast.index[:-30],
+                             y=forecast['Close'].iloc[:-30],
+                             mode='lines',
+                             name='Close Price',
+                             line = dict(width=2, color='Black')
+    ))
+    # Last 30 Days
+    fig.add_trace(go.Scatter(x=forecast.index[-31:],
+                             y=forecast['Close'].iloc[-31:],
+                             mode='lines',
+                             name='Future Close Price',
+                             line = dict(width=2, color='red')
+    ))
+    
+    fig.update_xaxes(rangeslider_visible=True)
+    fig.update_layout(
+        height=500, 
+        margin=dict(l=0, r=20, t=20, b=0), 
+        plot_bgcolor='white', 
+        paper_bgcolor='#e1efff', 
+        legend=dict(
+            yanchor="top",           
+            xanchor="left",
+        )
+    )
+    return fig
