@@ -18,18 +18,16 @@ with col1:
 
 st.subheader("Prediciting Next 30 Days Close Price for: "+ ticker)
 
-st.write("The Model is Being Trained, Please Wait....")
-
 close_price = get_data(ticker)
 rolling_price = get_rolling_mean(close_price)
 
-differencing_order = get_differencing_order(rolling_price)
-scaled_data, scaler = scaling(rolling_price)
-rmse = evelaute_model(scaled_data, differencing_order)
+with st.spinner("⏳ Training forecasting model and calculating metrics..."):
+    differencing_order = get_differencing_order(rolling_price)
+    scaled_data, scaler = scaling(rolling_price)
+    rmse = evelaute_model(scaled_data, differencing_order)
+    forecast = get_forecast(scaled_data, differencing_order)
 
 st.write("**Model RMSE Score:** ", str(rmse))
-
-forecast = get_forecast(scaled_data, differencing_order)
 
 forecast['Close'] = inverse_scaling(scaler, forecast['Close'])
 st.write('##### Forecast Data (Next 30 Days)')

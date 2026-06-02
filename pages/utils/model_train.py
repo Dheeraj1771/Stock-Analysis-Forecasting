@@ -59,6 +59,7 @@ def fit_model(data, differencing_order):
     return predictions
 
 # Evaluate the Model Trained
+@st.cache_data
 def evelaute_model(original_price, differencing_order):
     train_data, test_data = original_price[:-30], original_price[-30:]
     predictions = fit_model(train_data, differencing_order)
@@ -77,6 +78,7 @@ def inverse_scaling(scaler, scaled_data):
     return close_price
 
 # Get the forecasted value
+@st.cache_data
 def get_forecast(original_price, differencing_order):
     predictions = fit_model(original_price, differencing_order)
     start_date = datetime.now().strftime('%Y-%m-%d')
