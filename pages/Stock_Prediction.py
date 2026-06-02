@@ -15,6 +15,9 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     ticker = st.text_input('Stock Ticker', 'TSLA')
+if not ticker.strip():
+    st.warning("⚠️ Please enter a valid stock ticker (e.g., AAPL, NVDA, TSLA) to view the analysis.")
+    st.stop()
 
 st.subheader("Prediciting Next 30 Days Close Price for: "+ ticker)
 

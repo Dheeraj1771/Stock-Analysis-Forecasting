@@ -27,6 +27,9 @@ today = datetime.date.today()
 with col1:
     # Select the Ticker, Choose Defualt value as Tesla - TSLA
     ticker = st.text_input("Stock Ticker", "TSLA")
+if not ticker.strip():
+    st.warning("⚠️ Please enter a valid stock ticker (e.g., AAPL, NVDA, TSLA) to view the analysis.")
+    st.stop()
 with col2:
     # Select the Start Date, Choose default value as 1 year before from today's date
     start_date = st.date_input("Choose Start Date", today - datetime.timedelta(days=365))
