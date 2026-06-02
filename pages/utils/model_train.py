@@ -1,4 +1,5 @@
 import yfinance as yf
+import streamlit as st
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.arima.model import ARIMA
@@ -8,6 +9,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 # To get the Data from yfinance
+@st.cache_data
 def get_data(ticker):
     stock_data=yf.download(ticker, start='2024-01-01')
     
