@@ -38,41 +38,54 @@ with col3:
     # Select the End Date, Choose default value as todays date
     end_date = st.date_input("Choose End Date", datetime.date(today.year, today.month, today.day))
     
+@st.cache_data(ttl=86400)
+def get_cached_stock_info(ticker_symbol):
+    try:
+        return yf.Ticker(ticker_symbol).info
+    except Exception:
+        return None
+    
 st.subheader(ticker)
 
-stock = yf.Ticker(ticker)
+stock_info = get_cached_stock_info(ticker)
 
-st.write(stock.info['longBusinessSummary'])
-st.write("**The Sector of the Company is:**", stock.info['sector'])
-st.write("**The Number of Full Time Employess in the Company is:** ", str(stock.info['fullTimeEmployees']))
-st.write("**The Link to the Company Website is:** ", stock.info['website'])
+if stock_info is None or 'longBusinessSummary' not in stock_info:
+    st.error("⚠️ Unable to fetch live profile metrics right now due to Yahoo Finance rate limits. Historical charts below may still load.")
+else:
+    st.write(stock_info.get('longBusinessSummary', 'No summary available.'))
+    st.write("**The Sector of the Company is:**", stock_info.get('sector', 'N/A'))
+    st.write("**The Number of Full Time Employess in the Company is:** ", str(stock_info.get('fullTimeEmployees', 'N/A')))
+    st.write("**The Link to the Company Website is:** ", stock_info.get('website', 'N/A'))
 
 
-# To Show other Metrics in a DF (Data Frame) like Market Cap, Beta, EPS, PE Ratio
-col1, col2 = st.columns(2)
+    # To Show other Metrics in a DF (Data Frame) like Market Cap, Beta, EPS, PE Ratio
+    col1, col2 = st.columns(2)
 
-with col1:
-    # Create a DataFrame 
-    df = pd.DataFrame(index=['Market Cap', 'Beta', 'EPS', 'PE Ratio'])
-    df[''] = [stock.info["marketCap"], stock.info['beta'], stock.info['trailingEps'], stock.info['trailingPE']]
-    # Pass the DataFrame into the plotly_table
-    fig_df = plotly_table(df)
-    st.plotly_chart(fig_df, use_container_width=True)
-    
-with col2:
-    df = pd.DataFrame(index=['Quick Ratio', 'Revenue per share', 'Profit Margins',
-                             'Debt to Equity', 'Return on Equity'])
-    
-    df[''] = [stock.info["quickRatio"], stock.info["revenuePerShare"], stock.info["profitMargins"], stock.info["debtToEquity"], stock.info["returnOnEquity"]]
-    
-    fig_df = plotly_table(df)
-    st.plotly_chart(fig_df, use_container_width=True)
+    with col1:
+        # Create a DataFrame 
+        df = pd.DataFrame(index=['Market Cap', 'Beta', 'EPS', 'PE Ratio'])
+        df[''] = [stock_info.get("marketCap", "N/A"), stock_info.get('beta', "N/A"), stock_info.get('trailingEps', "N/A"), stock_info.get('trailingPE', "N/A")]
+        # Pass the DataFrame into the plotly_table
+        fig_df = plotly_table(df)
+        st.plotly_chart(fig_df, use_container_width=True)
+        
+    with col2:
+        df = pd.DataFrame(index=['Quick Ratio', 'Revenue per share', 'Profit Margins',
+                                 'Debt to Equity', 'Return on Equity'])
+        
+        df[''] = [stock_info.get("quickRatio", "N/A"), stock_info.get("revenuePerShare", "N/A"), stock_info.get("profitMargins", "N/A"), stock_info.get("debtToEquity", "N/A"), stock_info.get("returnOnEquity", "N/A")]
+        
+        fig_df = plotly_table(df)
+        st.plotly_chart(fig_df, use_container_width=True)
    
 # Dowload the Data using yfinance   
 # 1. Create a cached function for downloading
 @st.cache_data
 def fetch_historical_data(ticker, start, end):
-    return yf.download(ticker, start=start, end=end)
+    df = yf.download(ticker, start=start, end=end)
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.droplevel(1)
+    return df
 
 # 2. Call the new cached function
 data = fetch_historical_data(ticker, start=start_date, end=end_date)
